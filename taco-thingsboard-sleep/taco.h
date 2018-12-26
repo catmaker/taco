@@ -1,5 +1,5 @@
-#ifndef __TAIKO32_H__
-#define __TAIKO32_H__
+#ifndef __TACO_H__
+#define __TACO_H__
 
 
 #define PEN1    15
@@ -57,4 +57,4 @@ void ioColdSetup(void)
     digitalWrite(XB_RTS,   LOW);
 }
 
-#endif /* __TAIKO32_H__ */
+#endif /* __TACO_H__ */
