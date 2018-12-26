@@ -14,7 +14,7 @@ HardwareSerial xbeeUart(2);
 
 // Thingspeak and sensor variables
 char hostURL[] = "demo.thingsboard.io";
-char apiKey[] = "mlP6e7tVRlxGeWuLfmwO";
+char apiKey[] = "xxxxxxxxxxxxxxxxxxxx";
 float ambTemp, objTemp, mq2val, mq135val;
 int seconds = 0;
 bool haveConsole = false;
