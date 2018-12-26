@@ -14,7 +14,7 @@ HardwareSerial xbeeUart(2);
 
 // Thingspeak and sensor variables
 char hostURL[] = "demo.thingsboard.io";
-char apiKey[] = "RuenABULmHRsYghhVbdV";
+char apiKey[] = "mlP6e7tVRlxGeWuLfmwO";
 float ambTemp, objTemp, mq2val, mq135val;
 int seconds = 0;
 bool haveConsole = false;
@@ -241,16 +241,20 @@ boolean SendCMCommand(char* data, char* response)
 
 boolean myCheckResponse(String expected, int timout)
 {
+    xbeeUart.setTimeout(timout);
     String resp = xbeeUart.readStringUntil('\r');
     if (haveConsole) {
-        console.print(resp);
-        console.print(":");
+        console.print(">");
+         console.print(resp);
+#if 0
         for (int i = 0; i < resp.length(); i++) {
             console.print(" 0x");
             console.print(resp[i], HEX);
         }
+#endif
         console.println();
     }
+    xbeeUart.setTimeout(1000);
     return(resp == expected);
 }
 
