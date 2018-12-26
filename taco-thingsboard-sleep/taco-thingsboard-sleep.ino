@@ -14,7 +14,7 @@ HardwareSerial xbeeUart(2);
 
 // Thingspeak and sensor variables
 char hostURL[] = "demo.thingsboard.io";
-char apiKey[] = "XXXXXXXXXXXXXXXXXXXX";
+char apiKey[] = "RuenABULmHRsYghhVbdV";
 float ambTemp, objTemp, mq2val, mq135val;
 int seconds = 0;
 bool haveConsole = false;
@@ -102,39 +102,37 @@ void setup()
     wakeup_reason = esp_sleep_get_wakeup_cause();
     ioColdSetup();
 
-    digitalWrite(PEN1, HIGH);
+    digitalWrite(LED, HIGH);   // Just to light up LED
     int waited = 0;
     while ((!console) && (waited++ < 5))
         delay(1000);
     console.begin(115200);
     if (console)
         haveConsole = true;
-    // Configure baud rate for console ports
     rs485.begin(9600, SERIAL_8N1, 14, 12);
     xbeeUart.begin(9600, SERIAL_8N1, 16, 17);
     xbeeUart.flush();
     console.flush();
 
+     // Print boot count and reason on every reboot
+    console.println("Boot number: " + String(bootCount++));
+    print_wakeup_reason(wakeup_reason);
     if ((wakeup_reason < 1) || (wakeup_reason > 5)) {
        xbeeColdSetup();
     }
-    
-    // Print boot count and reason on every reboot
-    console.println("Boot number: " + String(bootCount++));
-    print_wakeup_reason(wakeup_reason);
 
-//    digitalWrite(XB_DTR, LOW);  // wakeup from Sleep_RQ mode
     verifyXbee();
     enableXbee();
-    /* Do something internet thing here */
+    /* Do some internet thing here */
+    getReadings();
+    sendHTTP();
     disableXbee();  
     
     digitalWrite(XB_DTR, HIGH); // allow pullup to Sleep_RQ mode
-    digitalWrite(XB_RST, LOW); // allow pullup to Sleep_RQ mode
     pinMode(XB_DTR, INPUT);
   
     Serial.println("GOING TO SLEEP NOW...");
-    digitalWrite(PEN1, LOW);
+    digitalWrite(LED, LOW);
 
     esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
     esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
@@ -152,6 +150,44 @@ void loop(){
     delay(500);
     digitalWrite(PEN1, LOW);
     delay(500);
+}
+
+void getReadings()
+{
+    ambTemp = random(18, 36);
+    objTemp = random(10, 30);
+    mq2val = random(200, 500);
+    mq135val = random(900, 1500);
+}
+
+void sendHTTP()
+{
+    if (haveConsole)
+        console.print("Preparing data...");
+
+    String jsonPayload = "{";
+    jsonPayload += ("\"AmbTemp\":" + String(ambTemp) + ",");
+    jsonPayload += ("\"ObjTemp\":" + String(objTemp) + ",");
+    jsonPayload += ("\"MQ2Val\":" + String(mq2val) + ",");
+    jsonPayload += ("\"MQ135Val\":" + String(mq135val));
+    jsonPayload += "}";
+    int jsonLen = jsonPayload.length();
+
+    if (haveConsole) {
+        console.println("Payload  (" + String(jsonLen) + ") = " + jsonPayload);
+        console.print(" Formatted, sending data...");
+    }
+    xbeeUart.print("POST /api/v1/" + String(apiKey) + "/telemetry HTTP/1.1\n");
+    xbeeUart.print("Host: " + String(hostURL) + "\n");
+    xbeeUart.print("Accept: */*\n");
+    xbeeUart.print("Content-Type: application/json\n");
+    xbeeUart.print("Content-Length: " + String(jsonLen));
+    xbeeUart.print("\n\n");
+    xbeeUart.print(jsonPayload);
+    xbeeUart.println();
+    myCheckResponse("", 10000);
+    if (haveConsole)
+        console.println(" Sent");
 }
 
 void verifyXbee()
@@ -188,8 +224,6 @@ void disableXbee()
     SendATCommand(cmdExit);
     console.println("XBee module in airplane mode!");  
 }
-
-
 
 boolean SendCMCommand(char* data, char* response)
 {
@@ -230,7 +264,6 @@ void SendATCommand(char* data)
     xbeeUart.println(data);
     myCheckResponse(String(""), 1000);
 }
-
 
 // This method sends an ATCommand and checks for a response
 boolean SendATCommand(char* data, char* expected)
