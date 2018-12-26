@@ -59,8 +59,8 @@ typedef struct {
 
 CMDLINE xbeeSetups[] = {
     { "ATDO", "8", "LTE powersaving mode" },
-    { "ATPD", "7fff", "pull direction on DIO pins" },
-    { "ATPR", "7fff", "pull up/down on DIO pins" },
+    { "ATPD", "7FFF", "pull direction on DIO pins" },
+    { "ATPR", "7FFF", "pull up/down on DIO pins" },
     { "ATD8", "1", "DIO8 sleep-pin enable" },
     { "ATSM", "1", "sleep-on-pin config" },
     { "ATAP", "0", "API mode to disabled" },
@@ -163,7 +163,7 @@ void getReadings()
 void sendHTTP()
 {
     if (haveConsole)
-        console.print("Preparing data...");
+        console.println("Preparing data...");
 
     String jsonPayload = "{";
     jsonPayload += ("\"AmbTemp\":" + String(ambTemp) + ",");
@@ -175,7 +175,7 @@ void sendHTTP()
 
     if (haveConsole) {
         console.println("Payload  (" + String(jsonLen) + ") = " + jsonPayload);
-        console.print(" Formatted, sending data...");
+        console.println("Formatted, sending data...");
     }
     xbeeUart.print("POST /api/v1/" + String(apiKey) + "/telemetry HTTP/1.1\n");
     xbeeUart.print("Host: " + String(hostURL) + "\n");
@@ -185,9 +185,9 @@ void sendHTTP()
     xbeeUart.print("\n\n");
     xbeeUart.print(jsonPayload);
     xbeeUart.println();
-    myCheckResponse("", 10000);
+    myGetResponse(10000);
     if (haveConsole)
-        console.println(" Sent");
+        console.println("Sent!!!");
 }
 
 void verifyXbee()
@@ -244,7 +244,7 @@ boolean myCheckResponse(String expected, int timout)
     xbeeUart.setTimeout(timout);
     String resp = xbeeUart.readStringUntil('\r');
     if (haveConsole) {
-        console.print(">");
+        console.print("> ");
          console.print(resp);
 #if 0
         for (int i = 0; i < resp.length(); i++) {
@@ -258,6 +258,25 @@ boolean myCheckResponse(String expected, int timout)
     return(resp == expected);
 }
 
+boolean myGetResponse(int initialTimeout)
+{
+    boolean haveResponse = true, firstLine = true;
+    xbeeUart.setTimeout(initialTimeout);
+    while (haveResponse == true) {
+        String resp = xbeeUart.readStringUntil('\r');
+        xbeeUart.setTimeout(1000);
+        if (resp.length() > 0) {
+            haveResponse = true;
+            resp.trim();
+            if (haveConsole) {
+                console.println("> " + resp);
+            }
+            firstLine = false;
+        }
+        else 
+            haveResponse = false;
+    }
+}
 // This method sends an ATCommand to the XBee
 void SendATCommand(char* data)
 {
