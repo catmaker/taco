@@ -1,0 +1,47 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "browse": {
+                "path": [
+                    "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/tools",
+                    "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0"
+                ]
+            },
+            "includePath": [
+                "${workspaceRoot}",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/tools/**",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/**",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include/freertos",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include/config",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include/heap",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include/log",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/cores/esp32",
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/variants/esp32thing"
+            ],
+            "forcedInclude": [
+                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/cores/esp32/Arduino.h"
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/adnan/Arduino/libraries/Time",
+                "/home/adnan/Arduino/libraries/RTClib",
+                "${workspaceRoot}",
+                "/home/adnan/.arduino15/packages/esp32/tools/**",
+                "/home/adnan/.arduino15/packages/esp32/hardware/esp32/1.0.0/**"
+            ],
+            "forcedInclude": [],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
