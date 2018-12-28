@@ -9,6 +9,8 @@
                 ]
             },
             "includePath": [
+                "D:\\Arduino\\libraries\\RTClib",
+                "D:\\Arduino\\libraries\\Time",
                 "${workspaceRoot}",
                 "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/tools/**",
                 "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/**",
@@ -20,9 +22,7 @@
                 "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/cores/esp32",
                 "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/variants/esp32thing"
             ],
-            "forcedInclude": [
-                "C:/Users/adnan/AppData/Local/Arduino15/packages/esp32/hardware/esp32/1.0.0/cores/esp32/Arduino.h"
-            ],
+            "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",
             "cStandard": "c11",
             "cppStandard": "c++17"

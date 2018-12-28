@@ -2,6 +2,6 @@
     "sketch": "taco-pcf8523.ino",
     "board": "esp32:esp32:esp32thing",
     "configuration": "FlashFreq=80,UploadSpeed=921600",
-    "port": "/dev/ttyUSB0",
+    "port": "COM31",
     "output": "../../.build-taco-pcf8523"
 }
