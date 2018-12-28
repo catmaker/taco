@@ -30,6 +30,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/adnan/Arduino/libraries/StringSplitter/src",
                 "/home/adnan/Arduino/libraries/Time",
                 "/home/adnan/Arduino/libraries/RTClib",
                 "${workspaceRoot}",
