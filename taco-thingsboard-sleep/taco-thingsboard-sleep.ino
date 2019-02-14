@@ -14,7 +14,7 @@ HardwareSerial xbeeUart(2);
 
 // Thingspeak and sensor variables
 char hostURL[] = "demo.thingsboard.io";
-char apiKey[] = "xxxxxxxxxxxxxxxxxxxx";
+char apiKey[] = "mlP6e7tVRlxGeWuLfmwO";
 float ambTemp, objTemp, mq2val, mq135val;
 int seconds = 0;
 bool haveConsole = false;
@@ -46,6 +46,8 @@ char cmdApply[] = "ATAC";   // Apply change command
 char cmdWrite[] = "ATWR";   // Write to flash
 char cmdAirplane[] = "ATAM1";       // Enable airplane mode
 char cmdAirplaneOff[] = "ATAM0";    // Disable airplane mode
+char cmdAssocLEDoff[] = "ATD50";    // Disable GPIO5
+char cmdAssocLEDon[] = "ATD51";     // Set GPIO5 to Assoc LED
 
 char rspOK[] = "OK"; // Command mode response
 char rspCONN[] = "0"; // 0-Connected, 2A-Airplane, 22-Registering, 23-Connecting to Internet, 25-Denied
@@ -61,6 +63,7 @@ CMDLINE xbeeSetups[] = {
     { "ATDO", "8", "LTE powersaving mode" },
     { "ATPD", "7FFF", "pull direction on DIO pins" },
     { "ATPR", "7FFF", "pull up/down on DIO pins" },
+    { "ATD5", "1", "DIO8 set as Assoc LED" },
     { "ATD8", "1", "DIO8 sleep-pin enable" },
     { "ATSM", "1", "sleep-on-pin config" },
     { "ATAP", "0", "API mode to disabled" },
@@ -102,7 +105,7 @@ void setup()
     wakeup_reason = esp_sleep_get_wakeup_cause();
     ioColdSetup();
 
-    digitalWrite(LED, HIGH);   // Just to light up LED
+    //digitalWrite(LED, HIGH);   // Just to light up LED
     int waited = 0;
     while ((!console) && (waited++ < 5))
         delay(1000);
@@ -202,6 +205,7 @@ void enableXbee()
     int retries = 0;
     console.println("Enable XBee Module for transmission.");
     while(!SendCMCommand(cmdMode, rspOK));  // AT command mode
+    while(!SendATCommand(cmdAssocLEDon, rspOK)); // Turn on airplane mode
     while(!SendATCommand(cmdAirplaneOff, rspOK)); // Turn off airplane mode
     while(!SendATCommand(cmdApply, rspOK)); // Apply change command
     // Wait for Association connection
@@ -218,6 +222,7 @@ void disableXbee()
 {
     console.println("Disable XBee Module for sleep mode.");
     while(!SendCMCommand(cmdMode, rspOK));  // AT command mode
+    while(!SendATCommand(cmdAssocLEDoff, rspOK)); // Turn on airplane mode
     while(!SendATCommand(cmdAirplane, rspOK)); // Turn on airplane mode
     while(!SendATCommand(cmdApply, rspOK)); // Apply change command
     while(!SendATCommand(cmdAssoc, rspAirplane));   // Wait for Airplane mode
