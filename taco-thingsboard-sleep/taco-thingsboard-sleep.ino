@@ -78,21 +78,33 @@ CMDLINE xbeeSetups[] = {
     { 0, 0, 0 },
 };
 
-void xbeeColdSetup()
+void xbeeColdVerifySetup()
 {   
-    int i = 0;
+    int i;
+    boolean result, anyFailed = false;
+    char commandBuf[100];
+
     console.println("XBee module configuration...");
     while(!SendCMCommand(cmdMode, rspOK));  // AT command mode
 
-    while (xbeeSetups[i].cmd != 0) {
-        console.println(xbeeSetups[i].description);
-        if (SendATCommand(xbeeSetups[i].cmd, xbeeSetups[i].param) == 0) {
-            console.println("FAIL!");
+    for (i = 0; setup_commands[i].cmd != 0; i++) {
+        console.print(setup_commands[i].cmd);
+        console.println(": Getting " + String(setup_commands[i].description));
+        result = SendATCommand(setup_commands[i].cmd, setup_commands[i].param);
+        if (!result) {
+            // FAILED, so write with new params
+            anyFailed = true;
+            strcpy(commandBuf, setup_commands[i].cmd);
+            strcat(commandBuf, setup_commands[i].param);
+            SendATCommand(commandBuf);
         }
         else {
             console.println("PASSED");
         }
-        i++;
+        if (anyFailed) {
+            SendATCommand(cmdWriteChange, rspOK);
+            SendATCommand(cmdApplyChange, rspOK);
+        }
     }
     SendATCommand(cmdExit);                 //Exit command mode
     console.println("XBee module set up!");
@@ -121,7 +133,7 @@ void setup()
     console.println("Boot number: " + String(bootCount++));
     print_wakeup_reason(wakeup_reason);
     if ((wakeup_reason < 1) || (wakeup_reason > 5)) {
-       xbeeColdSetup();
+       xbeeColdVerifySetup();
     }
 
     verifyXbee();
