@@ -87,23 +87,23 @@ void xbeeColdVerifySetup()
     console.println("XBee module configuration...");
     while(!SendCMCommand(cmdMode, rspOK));  // AT command mode
 
-    for (i = 0; setup_commands[i].cmd != 0; i++) {
-        console.print(setup_commands[i].cmd);
-        console.println(": Getting " + String(setup_commands[i].description));
-        result = SendATCommand(setup_commands[i].cmd, setup_commands[i].param);
+    for (i = 0; xbeeSetups[i].cmd != 0; i++) {
+        console.print(xbeeSetups[i].cmd);
+        console.println(": Getting " + String(xbeeSetups[i].description));
+        result = SendATCommand(xbeeSetups[i].cmd, xbeeSetups[i].param);
         if (!result) {
             // FAILED, so write with new params
             anyFailed = true;
-            strcpy(commandBuf, setup_commands[i].cmd);
-            strcat(commandBuf, setup_commands[i].param);
+            strcpy(commandBuf, xbeeSetups[i].cmd);
+            strcat(commandBuf, xbeeSetups[i].param);
             SendATCommand(commandBuf);
         }
         else {
             console.println("PASSED");
         }
         if (anyFailed) {
-            SendATCommand(cmdWriteChange, rspOK);
-            SendATCommand(cmdApplyChange, rspOK);
+            SendATCommand(cmdWrite, rspOK);
+            SendATCommand(cmdApply, rspOK);
         }
     }
     SendATCommand(cmdExit);                 //Exit command mode
@@ -137,10 +137,10 @@ void setup()
     }
 
     verifyXbee();
-    enableXbee();
-    /* Do some internet thing here */
-    getReadings();
-    sendHTTP();
+    if (enableXbee() == 0) {
+        getReadings();
+        sendHTTP();
+    }
     disableXbee();  
     
     digitalWrite(XB_DTR, HIGH); // allow pullup to Sleep_RQ mode
@@ -212,7 +212,8 @@ void verifyXbee()
     SendATCommand(cmdExit);                 //Exit command mode
     console.println("XBee module verified!");
 }
-void enableXbee()
+
+int enableXbee()
 {
     int retries = 0;
     console.println("Enable XBee Module for transmission.");
@@ -221,13 +222,20 @@ void enableXbee()
     while(!SendATCommand(cmdAirplaneOff, rspOK)); // Turn off airplane mode
     while(!SendATCommand(cmdApply, rspOK)); // Apply change command
     // Wait for Association connection
-    while(!SendATCommand(cmdAssoc, rspCONN)) {
+    while(!SendATCommand(cmdAssoc, rspCONN) && (retries < 50)) {
         retries++;
         delay(500);
     }
     console.println("Number of cmdAssoc retries = " + String(retries));
     SendATCommand(cmdExit);
-    console.println("XBee module enabled!");  
+    if (retries >= 50) {
+        console.println("XBee module cmdAssoc connection FAIL!");
+        return 1;
+    }
+    else {
+        console.println("XBee module enabled!");  
+    }
+    return 0;
 }
 
 void disableXbee()
