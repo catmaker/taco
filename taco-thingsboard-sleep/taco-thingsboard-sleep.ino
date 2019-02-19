@@ -14,7 +14,7 @@ HardwareSerial xbeeUart(2);
 
 // Thingspeak and sensor variables
 char hostURL[] = "demo.thingsboard.io";
-char apiKey[] = "mlP6e7tVRlxGeWuLfmwO";
+char apiKey[] = "PUT_DEVICE_WRITE_KEY";
 float ambTemp, objTemp, mq2val, mq135val;
 int seconds = 0;
 bool haveConsole = false;
@@ -63,7 +63,7 @@ CMDLINE xbeeSetups[] = {
     { "ATDO", "8", "LTE powersaving mode" },
     { "ATPD", "7FFF", "pull direction on DIO pins" },
     { "ATPR", "7FFF", "pull up/down on DIO pins" },
-    { "ATD5", "1", "DIO8 set as Assoc LED" },
+    { "ATD5", "1", "DIO5 set as Assoc LED" },
     { "ATD8", "1", "DIO8 sleep-pin enable" },
     { "ATSM", "1", "sleep-on-pin config" },
     { "ATAP", "0", "API mode to disabled" },
